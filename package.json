@@ -35,7 +35,24 @@
           "group": "navigation"
         }
       ]
-    }
+    },
+    "viewsContainers": {
+    "activitybar": [
+      {
+        "id": "pontisCodeSidebar",
+        "title": "Pontis Code",
+        "icon": "media/icon.png"
+      }
+    ]
+  },
+  "views": {
+    "codeTranslatorSidebar": [
+      {
+        "id": "pontisCodeView",
+        "name": "Pontis Code Translator"
+      }
+    ]
+  }
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
