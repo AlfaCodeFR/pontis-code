@@ -35,24 +35,7 @@
           "group": "navigation"
         }
       ]
-    },
-    "viewsContainers": {
-    "activitybar": [
-      {
-        "id": "pontisCodeSidebar",
-        "title": "Pontis Code",
-        "icon": "media/icon.png"
-      }
-    ]
-  },
-  "views": {
-    "codeTranslatorSidebar": [
-      {
-        "id": "pontisCodeView",
-        "name": "Pontis Code Translator"
-      }
-    ]
-  }
+    }
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
@@ -74,6 +57,7 @@
     "typescript": "^5.8.3"
   },
   "dependencies": {
+    "axios": "^1.9.0",
     "node-fetch": "^3.3.2"
   }
 }

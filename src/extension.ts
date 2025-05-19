@@ -116,6 +116,4 @@ function formatCode(code: string): string {
     });
 
     return formattedLines.join('\n').trim();
-}
-
-export function deactivate() {}
+  }
