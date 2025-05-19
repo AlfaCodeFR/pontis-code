@@ -14,10 +14,28 @@
   "contributes": {
     "commands": [
       {
-        "command": "pontis-code.translateCode",
-        "title": "Pontis: Translate Java ⇄ C#"
+        "command": "extension.translateJavaToCSharp",
+        "title": "Translate Java to C#"
+      },
+      {
+        "command": "extension.translateCSharpToJava",
+        "title": "Translate C# to Java"
       }
-    ]
+    ],
+    "menus": {
+      "editor/context": [
+        {
+          "command": "extension.translateJavaToCSharp",
+          "when": "editorHasSelection",
+          "group": "navigation"
+        },
+        {
+          "command": "extension.translateCSharpToJava",
+          "when": "editorHasSelection",
+          "group": "navigation"
+        }
+      ]
+    }
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
@@ -28,14 +46,17 @@
     "test": "vscode-test"
   },
   "devDependencies": {
-    "@types/vscode": "^1.100.0",
     "@types/mocha": "^10.0.10",
     "@types/node": "20.x",
+    "@types/vscode": "^1.100.0",
     "@typescript-eslint/eslint-plugin": "^8.31.1",
     "@typescript-eslint/parser": "^8.31.1",
-    "eslint": "^9.25.1",
-    "typescript": "^5.8.3",
     "@vscode/test-cli": "^0.0.10",
-    "@vscode/test-electron": "^2.5.2"
+    "@vscode/test-electron": "^2.5.2",
+    "eslint": "^9.25.1",
+    "typescript": "^5.8.3"
+  },
+  "dependencies": {
+    "node-fetch": "^3.3.2"
   }
 }
