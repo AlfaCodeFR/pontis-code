@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import axios from 'axios';
+import { TranslatorViewProvider } from './panel/TranslatorViewProvider';
 
 const API_URL_JAVA_TO_CS = 'https://causal-simply-foal.ngrok-free.app/translate_java_to_cs';
 const API_URL_CS_TO_JAVA = 'https://causal-simply-foal.ngrok-free.app/translate_cs_to_java';
@@ -17,8 +18,18 @@ export function activate(context: vscode.ExtensionContext) {
         await executeTranslationCommand('C# ke Java', API_URL_CS_TO_JAVA);
     });
 
+    
+    let disposableTranslatorPanel = vscode.commands.registerCommand('extension.showTranslatorPanel', async () => {
+        vscode.window.registerWebviewViewProvider(
+        TranslatorViewProvider.viewType,
+        new TranslatorViewProvider(context)
+        )
+    });
+
     context.subscriptions.push(disposableJavaToCSharp);
     context.subscriptions.push(disposableCSharpToJava);
+
+    context.subscriptions.push(disposableTranslatorPanel);
 }
 
 async function executeTranslationCommand(title: string, apiUrl: string) {

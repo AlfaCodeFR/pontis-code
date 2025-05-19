@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<body>
+  <h3>Kode Asli:</h3>
+  <textarea id="input" rows="10" style="width:100%;"></textarea>
+  <div>
+    <label>Sumber:</label>
+    <select id="source"><option value="java">Java</option><option value="csharp">C#</option></select>
+    <label>Target:</label>
+    <select id="target"><option value="csharp">C#</option><option value="java">Java</option></select>
+    <button onclick="translate()">Terjemahkan</button>
+  </div>
+  <h3>Hasil Translasi:</h3>
+  <textarea id="output" rows="10" style="width:100%;"></textarea>
+  <button onclick="copy()">Salin</button>
+  <button onclick="openEditor()">Buka di Editor</button>
+
+  <script>
+    const vscode = acquireVsCodeApi();
+
+    function translate() {
+      vscode.postMessage({
+        command: 'translate',
+        code: document.getElementById('input').value,
+        source: document.getElementById('source').value,
+        target: document.getElementById('target').value
+      });
+    }
+
+    function copy() {
+      vscode.postMessage({
+        command: 'copy',
+        code: document.getElementById('output').value
+      });
+    }
+
+    function openEditor() {
+      vscode.postMessage({
+        command: 'open',
+        code: document.getElementById('output').value,
+        lang: document.getElementById('target').value
+      });
+    }
+
+    window.addEventListener('message', event => {
+      if (event.data.command === 'result') {
+        document.getElementById('output').value = event.data.code;
+      }
+    });
+  </script>
+</body>
+</html>

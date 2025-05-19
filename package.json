@@ -15,11 +15,15 @@
     "commands": [
       {
         "command": "extension.translateJavaToCSharp",
-        "title": "Translate Java to C#"
+        "title": "Pontis Code: Translate Java to C#"
       },
       {
         "command": "extension.translateCSharpToJava",
-        "title": "Translate C# to Java"
+        "title": "Pontis Code: Translate C# to Java"
+      },
+      {
+        "command": "extension.showTranslatorPanel",
+        "title": "Pontis: Open Translator Panel"
       }
     ],
     "menus": {
@@ -33,6 +37,28 @@
           "command": "extension.translateCSharpToJava",
           "when": "editorHasSelection",
           "group": "navigation"
+        },
+        {
+          "command": "extension.showTranslatorPanel",
+          "when": "editorHasSelection",
+          "group": "navigation"
+        }
+      ]
+    },
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "pontisPanel",
+          "title": "Pontis",
+          "icon": "media/icon2.svg"
+        }
+      ]
+    },
+    "views": {
+      "pontisPanel": [
+        {
+          "id": "pontis.translatorView",
+          "name": "Translator"
         }
       ]
     }
