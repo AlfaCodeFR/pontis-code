@@ -53,20 +53,18 @@ const API_URL_JAVA_TO_CS = 'https://causal-simply-foal.ngrok-free.app/translate_
 const API_URL_CS_TO_JAVA = 'https://causal-simply-foal.ngrok-free.app/translate_cs_to_java';
 function activate(context) {
     console.log('Extension "codeTranslator" is now active!');
-    let disposableJavaToCSharp = vscode.commands.registerCommand('extension.translateJavaToCSharp', () => __awaiter(this, void 0, void 0, function* () {
-        console.log('Command extension.translateJavaToCSharp dipanggil.');
+    // Registrasi view provider SAAT AKTIVASI
+    context.subscriptions.push(vscode.window.registerWebviewViewProvider(TranslatorViewProvider_1.TranslatorViewProvider.viewType, new TranslatorViewProvider_1.TranslatorViewProvider(context)));
+    context.subscriptions.push(vscode.commands.registerCommand('extension.translateJavaToCSharp', () => __awaiter(this, void 0, void 0, function* () {
         yield executeTranslationCommand('Java ke C#', API_URL_JAVA_TO_CS);
-    }));
-    let disposableCSharpToJava = vscode.commands.registerCommand('extension.translateCSharpToJava', () => __awaiter(this, void 0, void 0, function* () {
-        console.log('Command extension.translateCSharpToJava dipanggil.');
+    })));
+    context.subscriptions.push(vscode.commands.registerCommand('extension.translateCSharpToJava', () => __awaiter(this, void 0, void 0, function* () {
         yield executeTranslationCommand('C# ke Java', API_URL_CS_TO_JAVA);
+    })));
+    context.subscriptions.push(vscode.commands.registerCommand('extension.showTranslatorPanel', () => {
+        // Fokus ke panel secara manual
+        vscode.commands.executeCommand('workbench.view.extension.pontisPanel');
     }));
-    let disposableTranslatorPanel = vscode.commands.registerCommand('extension.showTranslatorPanel', () => __awaiter(this, void 0, void 0, function* () {
-        vscode.window.registerWebviewViewProvider(TranslatorViewProvider_1.TranslatorViewProvider.viewType, new TranslatorViewProvider_1.TranslatorViewProvider(context));
-    }));
-    context.subscriptions.push(disposableJavaToCSharp);
-    context.subscriptions.push(disposableCSharpToJava);
-    context.subscriptions.push(disposableTranslatorPanel);
 }
 function executeTranslationCommand(title, apiUrl) {
     return __awaiter(this, void 0, void 0, function* () {

@@ -8,28 +8,26 @@ const API_URL_CS_TO_JAVA = 'https://causal-simply-foal.ngrok-free.app/translate_
 export function activate(context: vscode.ExtensionContext) {
     console.log('Extension "codeTranslator" is now active!');
 
-    let disposableJavaToCSharp = vscode.commands.registerCommand('extension.translateJavaToCSharp', async () => {
-        console.log('Command extension.translateJavaToCSharp dipanggil.');
-        await executeTranslationCommand('Java ke C#', API_URL_JAVA_TO_CS);
-    });
-
-    let disposableCSharpToJava = vscode.commands.registerCommand('extension.translateCSharpToJava', async () => {
-        console.log('Command extension.translateCSharpToJava dipanggil.');
-        await executeTranslationCommand('C# ke Java', API_URL_CS_TO_JAVA);
-    });
-
-    
-    let disposableTranslatorPanel = vscode.commands.registerCommand('extension.showTranslatorPanel', async () => {
+    // Registrasi view provider SAAT AKTIVASI
+    context.subscriptions.push(
         vscode.window.registerWebviewViewProvider(
         TranslatorViewProvider.viewType,
         new TranslatorViewProvider(context)
         )
-    });
+    );
 
-    context.subscriptions.push(disposableJavaToCSharp);
-    context.subscriptions.push(disposableCSharpToJava);
+    context.subscriptions.push(vscode.commands.registerCommand('extension.translateJavaToCSharp', async () => {
+        await executeTranslationCommand('Java ke C#', API_URL_JAVA_TO_CS);
+    }));
 
-    context.subscriptions.push(disposableTranslatorPanel);
+    context.subscriptions.push(vscode.commands.registerCommand('extension.translateCSharpToJava', async () => {
+        await executeTranslationCommand('C# ke Java', API_URL_CS_TO_JAVA);
+    }));
+
+    context.subscriptions.push(vscode.commands.registerCommand('extension.showTranslatorPanel', () => {
+        // Fokus ke panel secara manual
+        vscode.commands.executeCommand('workbench.view.extension.pontisPanel');
+    }));
 }
 
 async function executeTranslationCommand(title: string, apiUrl: string) {
