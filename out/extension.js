@@ -49,54 +49,23 @@ exports.activate = activate;
 exports.deactivate = deactivate;
 const vscode = __importStar(require("vscode"));
 const axios_1 = __importDefault(require("axios"));
-const TranslatorViewProvider_1 = require("./TranslatorViewProvider");
-const path = __importStar(require("path"));
-const fs = __importStar(require("fs"));
+const PontisSidebarProvider_1 = require("./PontisSidebarProvider");
 const API_URL_JAVA_TO_CS = 'https://causal-simply-foal.ngrok-free.app/translate_java_to_cs';
 const API_URL_CS_TO_JAVA = 'https://causal-simply-foal.ngrok-free.app/translate_cs_to_java';
 function activate(context) {
     console.log('Extension "codeTranslator" is now active!');
-    // Registrasi view provider SAAT AKTIVASI
-    context.subscriptions.push(vscode.window.registerWebviewViewProvider(TranslatorViewProvider_1.TranslatorViewProvider.viewType, new TranslatorViewProvider_1.TranslatorViewProvider(context)));
     context.subscriptions.push(vscode.commands.registerCommand('pontis.translateJavaToCSharp', () => __awaiter(this, void 0, void 0, function* () {
         yield executeTranslationCommand('Java ke C#', API_URL_JAVA_TO_CS);
     })));
     context.subscriptions.push(vscode.commands.registerCommand('pontis.translateCSharpToJava', () => __awaiter(this, void 0, void 0, function* () {
         yield executeTranslationCommand('C# ke Java', API_URL_CS_TO_JAVA);
     })));
-    context.subscriptions.push(vscode.commands.registerCommand('pontis.showTranslatorPanel', () => {
-        // Fokus ke panel secara manual
-        vscode.commands.executeCommand('workbench.view.pontis.pontisPanel');
+    context.subscriptions.push(vscode.commands.registerCommand('pontis.iconClicked', () => {
+        vscode.window.showInformationMessage('Ikon berhasil diklik!');
     }));
-    const disposable = vscode.commands.registerCommand('pontis.showWebviewPanel', () => {
-        const panel = vscode.window.createWebviewPanel('pontisTranslator', 'Pontis Translator', vscode.ViewColumn.One, {
-            enableScripts: true,
-            localResourceRoots: [
-                vscode.Uri.file(path.join(context.extensionPath, 'media'))
-            ]
-        });
-        const htmlPath = path.join(context.extensionPath, 'media', 'translatorPanel.html');
-        const htmlContent = fs.readFileSync(htmlPath, 'utf8');
-        panel.webview.html = htmlContent;
-        panel.webview.onDidReceiveMessage((message) => __awaiter(this, void 0, void 0, function* () {
-            if (message.command === 'translate') {
-                const result = yield callTranslationAPI2(message.source, message.code);
-                panel.webview.postMessage({ command: 'result', code: result });
-            }
-            else if (message.command === 'copy') {
-                vscode.env.clipboard.writeText(message.code);
-                vscode.window.showInformationMessage('Code copied to clipboard.');
-            }
-            else if (message.command === 'open') {
-                const doc = yield vscode.workspace.openTextDocument({
-                    language: message.lang,
-                    content: message.code
-                });
-                vscode.window.showTextDocument(doc, vscode.ViewColumn.Beside);
-            }
-        }));
-    });
-    context.subscriptions.push(disposable);
+    const sidebarProvider = new PontisSidebarProvider_1.PontisSidebarProvider(context.extensionUri);
+    context.subscriptions.push(vscode.window.registerWebviewViewProvider('pontisView', sidebarProvider));
+    console.log('Sidebar provider didaftarkan!');
 }
 function executeTranslationCommand(title, apiUrl) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -192,25 +161,6 @@ function formatCode(code) {
         return indentedLine;
     });
     return formattedLines.join('\n').trim();
-}
-function callTranslationAPI2(source, code) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const url = source === 'java'
-            ? 'https://causal-simply-foal.ngrok-free.app/translate_java_to_cs'
-            : 'https://causal-simply-foal.ngrok-free.app/translate_cs_to_java';
-        try {
-            const res = yield fetch(url, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ code })
-            });
-            const data = yield res.json();
-            return data.translated_code || '// Error: no result';
-        }
-        catch (_a) {
-            return '// Error accessing API';
-        }
-    });
 }
 function deactivate() { }
 //# sourceMappingURL=extension.js.map

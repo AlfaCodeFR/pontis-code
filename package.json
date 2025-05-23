@@ -10,7 +10,9 @@
   "categories": [
     "Other"
   ],
-  "activationEvents": [],
+  "activationEvents": [
+    "onView:pontisView"
+  ],
   "main": "./out/extension.js",
   "contributes": {
     "commands": [
@@ -21,6 +23,10 @@
       {
         "command": "pontis.translateCSharpToJava",
         "title": "Pontis Code: Translate C# to Java"
+      },
+      {
+        "command": "pontis.iconClicked",
+        "title": "Klik Ikon PONTIS"
       }
     ],
     "menus": {
@@ -34,6 +40,24 @@
           "command": "pontis.translateCSharpToJava",
           "when": "editorHasSelection",
           "group": "navigation"
+        }
+      ]
+    },
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "pontisSidebar",
+          "title": "PONTIS",
+          "icon": "media/icon.svg"
+        }
+      ]
+    },
+    "views": {
+      "pontisSidebar": [
+        {
+          "id": "pontisView",
+          "name": "Translator Panel",
+          "icon": "media/icon.svg"
         }
       ]
     }
@@ -58,7 +82,6 @@
     "typescript": "^5.8.3"
   },
   "dependencies": {
-    "axios": "^1.9.0",
-    "node-fetch": "^3.3.2"
+    "axios": "^1.9.0"
   }
 }

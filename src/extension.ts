@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import axios from 'axios';
+import { PontisSidebarProvider } from './PontisSidebarProvider';
 
 const API_URL_JAVA_TO_CS = 'https://causal-simply-foal.ngrok-free.app/translate_java_to_cs';
 const API_URL_CS_TO_JAVA = 'https://causal-simply-foal.ngrok-free.app/translate_cs_to_java';
@@ -14,6 +15,19 @@ export function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(vscode.commands.registerCommand('pontis.translateCSharpToJava', async () => {
         await executeTranslationCommand('C# ke Java', API_URL_CS_TO_JAVA);
     }));
+
+    context.subscriptions.push(
+        vscode.commands.registerCommand('pontis.iconClicked', () => {
+            vscode.window.showInformationMessage('Ikon berhasil diklik!');
+        })
+    );
+
+    const sidebarProvider = new PontisSidebarProvider(context.extensionUri);
+    context.subscriptions.push(
+        vscode.window.registerWebviewViewProvider('pontisView', sidebarProvider)
+    );
+    
+    console.log('Sidebar provider didaftarkan!');
 }
 
 async function executeTranslationCommand(title: string, apiUrl: string) {
