@@ -1,6 +1,8 @@
 import * as vscode from 'vscode';
 import axios from 'axios';
-import { TranslatorViewProvider } from './panel/TranslatorViewProvider';
+import { TranslatorViewProvider } from './TranslatorViewProvider';
+import * as path from 'path';
+import * as fs from 'fs';
 
 const API_URL_JAVA_TO_CS = 'https://causal-simply-foal.ngrok-free.app/translate_java_to_cs';
 const API_URL_CS_TO_JAVA = 'https://causal-simply-foal.ngrok-free.app/translate_cs_to_java';
@@ -16,18 +18,54 @@ export function activate(context: vscode.ExtensionContext) {
         )
     );
 
-    context.subscriptions.push(vscode.commands.registerCommand('extension.translateJavaToCSharp', async () => {
+    context.subscriptions.push(vscode.commands.registerCommand('pontis.translateJavaToCSharp', async () => {
         await executeTranslationCommand('Java ke C#', API_URL_JAVA_TO_CS);
     }));
 
-    context.subscriptions.push(vscode.commands.registerCommand('extension.translateCSharpToJava', async () => {
+    context.subscriptions.push(vscode.commands.registerCommand('pontis.translateCSharpToJava', async () => {
         await executeTranslationCommand('C# ke Java', API_URL_CS_TO_JAVA);
     }));
 
-    context.subscriptions.push(vscode.commands.registerCommand('extension.showTranslatorPanel', () => {
+    context.subscriptions.push(vscode.commands.registerCommand('pontis.showTranslatorPanel', () => {
         // Fokus ke panel secara manual
-        vscode.commands.executeCommand('workbench.view.extension.pontisPanel');
+        vscode.commands.executeCommand('workbench.view.pontis.pontisPanel');
     }));
+
+    const disposable = vscode.commands.registerCommand('pontis.showWebviewPanel', () => {
+        const panel = vscode.window.createWebviewPanel(
+        'pontisTranslator',
+        'Pontis Translator',
+        vscode.ViewColumn.One,
+        {
+            enableScripts: true,
+            localResourceRoots: [
+            vscode.Uri.file(path.join(context.extensionPath, 'media'))
+            ]
+        }
+        );
+
+        const htmlPath = path.join(context.extensionPath, 'media', 'translatorPanel.html');
+        const htmlContent = fs.readFileSync(htmlPath, 'utf8');
+        panel.webview.html = htmlContent;
+
+        panel.webview.onDidReceiveMessage(async message => {
+        if (message.command === 'translate') {
+            const result = await callTranslationAPI2(message.source, message.code);
+            panel.webview.postMessage({ command: 'result', code: result });
+        } else if (message.command === 'copy') {
+            vscode.env.clipboard.writeText(message.code);
+            vscode.window.showInformationMessage('Code copied to clipboard.');
+        } else if (message.command === 'open') {
+            const doc = await vscode.workspace.openTextDocument({
+            language: message.lang,
+            content: message.code
+            });
+            vscode.window.showTextDocument(doc, vscode.ViewColumn.Beside);
+        }
+        });
+    });
+
+    context.subscriptions.push(disposable);
 }
 
 async function executeTranslationCommand(title: string, apiUrl: string) {
@@ -125,4 +163,24 @@ function formatCode(code: string): string {
     });
 
     return formattedLines.join('\n').trim();
+}
+
+async function callTranslationAPI2(source: string, code: string): Promise<string> {
+  const url = source === 'java'
+    ? 'https://causal-simply-foal.ngrok-free.app/translate_java_to_cs'
+    : 'https://causal-simply-foal.ngrok-free.app/translate_cs_to_java';
+
+  try {
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ code })
+    });
+    const data = await res.json() as { translated_code: string };
+    return data.translated_code || '// Error: no result';
+  } catch {
+    return '// Error accessing API';
   }
+}
+
+export function deactivate() {}

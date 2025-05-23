@@ -1,5 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline' vscode-resource:; style-src 'unsafe-inline' vscode-resource:;">
+  <style>
+    body {
+      padding: 10px;
+      height: 100vh;
+      box-sizing: border-box;
+      overflow: hidden;
+    }
+    textarea {
+      height: 200px;
+      margin-bottom: 10px;
+    }
+    #output {
+      height: 200px;
+    }
+  </style>
+</head>
 <body>
   <h3>Kode Asli:</h3>
   <textarea id="input" rows="10" style="width:100%;"></textarea>

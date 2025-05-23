@@ -3,45 +3,66 @@
   "displayName": "Pontis Code",
   "description": "",
   "version": "0.0.1",
+  "publisher": "fathurrasyid",
   "engines": {
     "vscode": "^1.100.0"
   },
   "categories": [
     "Other"
   ],
-  "activationEvents": [],
+  "activationEvents": [
+      "onCommand:pontis.showWebviewPanel",
+      "onView:pontis.translatorView",
+      "onCommand:pontis.translateJavaToCSharp",
+      "onCommand:pontis.translateCSharpToJava",
+      "onCommand:pontis.showTranslatorPanel"
+  ],
   "main": "./out/extension.js",
   "contributes": {
     "commands": [
       {
-        "command": "extension.translateJavaToCSharp",
+        "command": "pontis.translateJavaToCSharp",
         "title": "Pontis Code: Translate Java to C#"
       },
       {
-        "command": "extension.translateCSharpToJava",
+        "command": "pontis.translateCSharpToJava",
         "title": "Pontis Code: Translate C# to Java"
       },
       {
-        "command": "extension.showTranslatorPanel",
+        "command": "pontis.showTranslatorPanel",
+        "title": "Pontis: Open Translator Panel"
+      },
+      {
+        "command": "pontis.showWebviewPanel",
         "title": "Pontis: Open Translator Panel"
       }
     ],
     "menus": {
       "editor/context": [
         {
-          "command": "extension.translateJavaToCSharp",
+          "command": "pontis.translateJavaToCSharp",
           "when": "editorHasSelection",
           "group": "navigation"
         },
         {
-          "command": "extension.translateCSharpToJava",
+          "command": "pontis.translateCSharpToJava",
           "when": "editorHasSelection",
           "group": "navigation"
         },
         {
-          "command": "extension.showTranslatorPanel",
+          "command": "pontis.showTranslatorPanel",
           "when": "editorHasSelection",
           "group": "navigation"
+        }
+      ]
+    },
+    "views": {
+      "pontisPanel": [
+        {
+          "id": "pontis.translatorView",
+          "name": "Translator",
+          "contextualTitle": "Pontis Translator",
+          "icon": "media/icon.svg"
         }
       ]
     },
@@ -51,14 +72,6 @@
           "id": "pontisPanel",
           "title": "Pontis",
           "icon": "media/icon.svg"
-        }
-      ]
-    },
-    "views": {
-      "pontisPanel": [
-        {
-          "id": "pontis.translatorView",
-          "name": "Translator"
         }
       ]
     }

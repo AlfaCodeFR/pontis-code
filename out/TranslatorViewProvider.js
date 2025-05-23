@@ -44,28 +44,43 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TranslatorViewProvider = void 0;
 const vscode = __importStar(require("vscode"));
-const path = __importStar(require("path"));
 const fs = __importStar(require("fs"));
 class TranslatorViewProvider {
     constructor(context) {
         this.context = context;
     }
-    resolveWebviewView(view) {
-        this._view = view;
-        view.webview.options = {
+    resolveWebviewView(webviewView) {
+        this._view = webviewView;
+        webviewView.webview.options = {
             enableScripts: true,
-            localResourceRoots: [vscode.Uri.file(path.join(this.context.extensionPath, 'media'))]
+            localResourceRoots: [this.context.extensionUri]
         };
-        const htmlPath = path.join(this.context.extensionPath, 'media', 'translatorPanel.html');
-        const htmlContent = fs.readFileSync(htmlPath, 'utf-8');
-        view.webview.html = htmlContent;
-        view.webview.onDidReceiveMessage((message) => __awaiter(this, void 0, void 0, function* () {
+        // Path ke HTML
+        const htmlPath = vscode.Uri.joinPath(this.context.extensionUri, "media", "translatorPanel.html");
+        // Baca konten HTML
+        const htmlContent = fs.readFileSync(htmlPath.fsPath, "utf-8");
+        // Tambahkan CSP dan proses resource
+        const processedHtml = htmlContent
+            .replace(/(<link.+?href="|<script.+?src="|<img.+?src=")(.+?)"/g, (_, prefix, src) => {
+            const resourceUri = vscode.Uri.joinPath(this.context.extensionUri, src);
+            const webviewUri = webviewView.webview.asWebviewUri(resourceUri);
+            return `${prefix}${webviewUri}"`;
+        })
+            .replace("</head>", `<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src ${webviewView.webview.cspSource} 'unsafe-inline'; style-src ${webviewView.webview.cspSource} 'unsafe-inline';"></head>`);
+        webviewView.webview.html = processedHtml;
+        console.log('Resolving webview view');
+        console.log('Extension URI:', this.context.extensionUri.fsPath);
+        console.log('HTML path:', htmlPath.fsPath);
+        console.log("Webview URI:", htmlContent.toString());
+        console.log("Webview URI:", htmlPath.toString());
+        console.log("HTML Content:", htmlContent.substring(0, 100)); // Cek 100 karakter pertama
+        webviewView.webview.onDidReceiveMessage((message) => __awaiter(this, void 0, void 0, function* () {
             if (message.command === 'translate') {
                 const apiUrl = message.source === 'java'
                     ? 'https://causal-simply-foal.ngrok-free.app/translate_java_to_cs'
                     : 'https://causal-simply-foal.ngrok-free.app/translate_cs_to_java';
                 const translated = yield callTranslationAPI(apiUrl, message.code);
-                view.webview.postMessage({ command: 'result', code: translated });
+                webviewView.webview.postMessage({ command: 'result', code: translated });
             }
             if (message.command === 'copy') {
                 yield vscode.env.clipboard.writeText(message.code);
