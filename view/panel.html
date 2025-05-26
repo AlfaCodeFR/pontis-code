@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 16px;
+      color: var(--vscode-foreground);
+      background-color: var(--vscode-sideBar-background);
+    }
+
+    h2 {
+      font-size: 1.3rem;
+      font-weight: bold;
+      margin-bottom: 1rem;
+    }
+
+    label {
+      font-size: 0.9rem;
+      margin-bottom: 0.25rem;
+      display: block;
+    }
+
+    select, textarea {
+      width: 100%;
+      padding: 6px;
+      border-radius: 6px;
+      border: 1px solid var(--vscode-editorWidget-border);
+      margin-bottom: 1rem;
+      background-color: var(--vscode-input-background);
+      color: var(--vscode-input-foreground);
+      font-family: monospace;
+    }
+
+    .row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+
+    .row > * {
+      flex: 1;
+    }
+
+    .buttons {
+      display: flex;
+      gap: 8px;
+      justify-content: space-between;
+    }
+
+    button {
+      padding: 6px 12px;
+      border: none;
+      background-color: var(--vscode-button-background);
+      color: var(--vscode-button-foreground);
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.85rem;
+    }
+
+    button:hover {
+      background-color: var(--vscode-button-hoverBackground);
+    }
+
+    .score {
+      margin-top: 12px;
+      font-size: 0.85rem;
+      color: var(--vscode-descriptionForeground);
+    }
+
+    .section {
+      margin-bottom: 1.5rem;
+    }
+  </style>
+</head>
+<body>
+  <h2>🚀 PONTIS: TRANSLATOR</h2>
+
+  <div class="section">
+    <label for="input">Input</label>
+    <textarea id="input" rows="6" placeholder="Masukkan kode di sini..."></textarea>
+  </div>
+
+  <div class="section row">
+    <div>
+      <label for="model">Model</label>
+      <select id="model">
+        <option>CodeT5</option>
+        <option>PLBART</option>
+      </select>
+    </div>
+    <div>
+      <label for="lang-from">From</label>
+      <select id="lang-from">
+        <option>Java</option>
+        <option>Python</option>
+        <option>C#</option>
+        <option>Javascript</option>
+      </select>
+    </div>
+    <div>
+      <label for="lang-to">To</label>
+      <select id="lang-to">
+        <option>Python</option>
+        <option>Java</option>
+        <option>C#</option>
+        <option>Javascript</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="section">
+    <label for="output">Output</label>
+    <textarea id="output" rows="6" readonly placeholder="Hasil translasi akan muncul di sini..."></textarea>
+  </div>
+
+  <div class="buttons">
+    <button id="translate">Translate</button>
+    <button id="copy">Copy</button>
+    <button id="add">Add New File</button>
+  </div>
+
+  <div class="score">
+    Test Score: <span id="score">65%</span>
+  </div>
+
+  <script>
+    const vscode = acquireVsCodeApi();
+
+    document.getElementById('translate').addEventListener('click', () => {
+      const input = document.getElementById('input').value;
+      const model = document.getElementById('model').value;
+      const from = document.getElementById('lang-from').value;
+      const to = document.getElementById('lang-to').value;
+      vscode.postMessage({ type: 'translate', input, model, from, to });
+    });
+
+    document.getElementById('copy').addEventListener('click', () => {
+      vscode.postMessage({ type: 'copy' });
+    });
+
+    document.getElementById('add').addEventListener('click', () => {
+      vscode.postMessage({ type: 'addFile' });
+    });
+  </script>
+</body>
+</html>

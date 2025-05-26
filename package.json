@@ -10,9 +10,7 @@
   "categories": [
     "Other"
   ],
-  "activationEvents": [
-    "onView:pontisView"
-  ],
+  "activationEvents": [],
   "main": "./out/extension.js",
   "contributes": {
     "commands": [
@@ -27,6 +25,10 @@
       {
         "command": "pontis.iconClicked",
         "title": "Klik Ikon PONTIS"
+      },
+      {
+        "command": "pontis.showPanel",
+        "title": "Pontis: Tampilkan Panel"
       }
     ],
     "menus": {
@@ -55,6 +57,7 @@
     "views": {
       "pontisSidebar": [
         {
+          "type": "webview",
           "id": "pontisView",
           "name": "Translator Panel",
           "icon": "media/icon.svg"
