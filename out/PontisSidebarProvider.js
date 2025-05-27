@@ -40,33 +40,40 @@ class PontisSidebarProvider {
     constructor(_extensionUri) {
         this._extensionUri = _extensionUri;
     }
-    /**
-     * Implementasi wajib dari WebviewViewProvider
-     */
-    resolveWebviewView(webviewView, context, token) {
-        this._view = webviewView;
+    resolveWebviewView(webviewView) {
         webviewView.webview.options = {
             enableScripts: true,
             localResourceRoots: [
-                vscode.Uri.joinPath(this._extensionUri, 'view'),
-                vscode.Uri.joinPath(this._extensionUri, 'media')
+                vscode.Uri.joinPath(this._extensionUri, 'media'),
+                vscode.Uri.joinPath(this._extensionUri, 'view')
             ]
         };
         webviewView.webview.html = this.getHtmlForWebview(webviewView.webview);
     }
-    /**
-     * Membaca file HTML dan menginject CSP yang aman
-     */
     getHtmlForWebview(webview) {
         const htmlPath = vscode.Uri.joinPath(this._extensionUri, 'view', 'panel.html');
-        let html = fs.readFileSync(htmlPath.fsPath, 'utf8');
+        const scriptUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'media', 'js', 'script.js'));
+        const styleUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'media', 'css', 'style.css'));
+        const nonce = getNonce();
         const cspSource = webview.cspSource;
-        // inject CSP agar aman
+        let html = fs.readFileSync(htmlPath.fsPath, 'utf8');
+        html = html
+            .replace(/%%SCRIPT_URI%%/g, scriptUri.toString())
+            .replace(/%%NONCE%%/g, nonce)
+            .replace(/<link href="\$\{styleUri\}"/, `<link href="${styleUri}"`);
         html = html.replace(/<head>/i, `<head>
-    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src ${cspSource}; style-src ${cspSource}; script-src 'unsafe-inline' ${cspSource};">`);
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src ${cspSource}; style-src ${cspSource}; script-src 'nonce-${nonce}';">`);
         return html;
     }
 }
 exports.PontisSidebarProvider = PontisSidebarProvider;
 PontisSidebarProvider.viewType = 'pontisView';
+function getNonce() {
+    let text = '';
+    const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    for (let i = 0; i < 32; i++) {
+        text += possible.charAt(Math.floor(Math.random() * possible.length));
+    }
+    return text;
+}
 //# sourceMappingURL=PontisSidebarProvider.js.map
