@@ -63,9 +63,24 @@ function activate(context) {
     context.subscriptions.push(vscode.commands.registerCommand('pontis.iconClicked', () => {
         vscode.window.showInformationMessage('Ikon berhasil diklik!');
     }));
-    const sidebarProvider = new PontisSidebarProvider_1.PontisSidebarProvider(context.extensionUri);
-    context.subscriptions.push(vscode.window.registerWebviewViewProvider('pontisView', sidebarProvider));
+    const sidebarProviderInstance = new PontisSidebarProvider_1.PontisSidebarProvider(context.extensionUri);
+    context.subscriptions.push(vscode.window.registerWebviewViewProvider('pontisView', sidebarProviderInstance));
     console.log('Sidebar provider didaftarkan!');
+    context.subscriptions.push(vscode.commands.registerCommand('pontis.translateFromContextMenu', () => {
+        const editor = vscode.window.activeTextEditor;
+        if (!editor)
+            return;
+        const selectedText = editor.document.getText(editor.selection);
+        vscode.commands.executeCommand('pontis.setInputText', selectedText);
+    }));
+    context.subscriptions.push(vscode.commands.registerCommand('pontis.setInputText', (text) => {
+        if (sidebarProviderInstance === null || sidebarProviderInstance === void 0 ? void 0 : sidebarProviderInstance.view) {
+            sidebarProviderInstance.view.webview.postMessage({
+                type: 'setInputText',
+                value: text
+            });
+        }
+    }));
 }
 function executeTranslationCommand(title, apiUrl) {
     return __awaiter(this, void 0, void 0, function* () {

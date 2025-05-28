@@ -19,5 +19,12 @@
     });
   });
 
-  // TODO: Add more events like `Translate` if needed
+  window.addEventListener("message", event => {
+    const message = event.data;
+    switch (message.type) {
+      case "setInputText":
+        document.getElementById('inputBox').value = message.value;
+        break;
+    }
+  });
 })();

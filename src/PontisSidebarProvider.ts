@@ -4,12 +4,14 @@ import * as path from 'path';
 
 export class PontisSidebarProvider implements vscode.WebviewViewProvider {
   public static readonly viewType = 'pontisView';
+  public view?: vscode.WebviewView;
 
   constructor(private readonly _extensionUri: vscode.Uri) {}
 
   public resolveWebviewView(
     webviewView: vscode.WebviewView
   ): void {
+    this.view = webviewView;
     webviewView.webview.options = {
       enableScripts: true,
       localResourceRoots: [

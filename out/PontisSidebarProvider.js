@@ -41,6 +41,7 @@ class PontisSidebarProvider {
         this._extensionUri = _extensionUri;
     }
     resolveWebviewView(webviewView) {
+        this.view = webviewView;
         webviewView.webview.options = {
             enableScripts: true,
             localResourceRoots: [

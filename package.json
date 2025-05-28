@@ -29,6 +29,10 @@
       {
         "command": "pontis.showPanel",
         "title": "Pontis: Tampilkan Panel"
+      },
+      {
+        "command": "pontis.translateFromContextMenu",
+        "title": "Translate with Pontis"
       }
     ],
     "menus": {
@@ -40,6 +44,11 @@
         },
         {
           "command": "pontis.translateCSharpToJava",
+          "when": "editorHasSelection",
+          "group": "navigation"
+        },
+        {
+          "command": "pontis.translateFromContextMenu",
           "when": "editorHasSelection",
           "group": "navigation"
         }
