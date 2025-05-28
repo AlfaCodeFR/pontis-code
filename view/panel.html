@@ -7,8 +7,6 @@
     <title>PONTIS Translator</title>
   </head>
   <body>
-    <h2>PONTIS: TRANSLATOR</h2>
-
     <label for="inputBox">Input</label>
     <textarea id="inputBox" rows="6" placeholder="Masukkan kode Anda..."></textarea>
 
@@ -39,17 +37,20 @@
       </div>
     </div>
 
+    <div class="button-group">
+      <button id="translateBtn">Translate</button>
+    </div>
+
     <label for="outputBox">Output</label>
     <textarea id="outputBox" rows="6" readonly placeholder="Hasil translasi akan muncul di sini..."></textarea>
 
-    <div class="button-group">
-      <button id="translateBtn">Translate</button>
-      <button id="copyBtn">Copy</button>
-      <button id="newFileBtn">Add New File</button>
-    </div>
-
     <div class="score">
       Test Score: <span id="score">65%</span>
+    </div>
+
+    <div class="button-group">
+      <button id="copyBtn">Copy</button>
+      <button id="newFileBtn">Add New File</button>
     </div>
 
     <script nonce="%%NONCE%%" src="%%SCRIPT_URI%%"></script>
