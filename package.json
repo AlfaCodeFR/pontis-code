@@ -15,38 +15,12 @@
   "contributes": {
     "commands": [
       {
-        "command": "pontis.translateJavaToCSharp",
-        "title": "Pontis Code: Translate Java to C#"
-      },
-      {
-        "command": "pontis.translateCSharpToJava",
-        "title": "Pontis Code: Translate C# to Java"
-      },
-      {
-        "command": "pontis.iconClicked",
-        "title": "Klik Ikon PONTIS"
-      },
-      {
-        "command": "pontis.showPanel",
-        "title": "Pontis: Tampilkan Panel"
-      },
-      {
         "command": "pontis.translateFromContextMenu",
         "title": "Translate with Pontis"
       }
     ],
     "menus": {
       "editor/context": [
-        {
-          "command": "pontis.translateJavaToCSharp",
-          "when": "editorHasSelection",
-          "group": "navigation"
-        },
-        {
-          "command": "pontis.translateCSharpToJava",
-          "when": "editorHasSelection",
-          "group": "navigation"
-        },
         {
           "command": "pontis.translateFromContextMenu",
           "when": "editorHasSelection",

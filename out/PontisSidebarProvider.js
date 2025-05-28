@@ -32,10 +32,23 @@ var __importStar = (this && this.__importStar) || (function () {
         return result;
     };
 })();
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PontisSidebarProvider = void 0;
 const vscode = __importStar(require("vscode"));
 const fs = __importStar(require("fs"));
+const axios_1 = __importDefault(require("axios"));
 class PontisSidebarProvider {
     constructor(_extensionUri) {
         this._extensionUri = _extensionUri;
@@ -50,6 +63,33 @@ class PontisSidebarProvider {
             ]
         };
         webviewView.webview.html = this.getHtmlForWebview(webviewView.webview);
+        webviewView.webview.onDidReceiveMessage((message) => __awaiter(this, void 0, void 0, function* () {
+            switch (message.type) {
+                case 'translate':
+                    const { inputCode, langFrom, langTo, model } = message.value;
+                    try {
+                        const response = yield axios_1.default.post('https://causal-simply-foal.ngrok-free.app/translate', {
+                            code: inputCode,
+                            model: model,
+                            source_lang: langFrom,
+                            target_lang: langTo
+                        });
+                        const translated = response.data.translated_code || '// Translation failed.';
+                        webviewView.webview.postMessage({ type: 'output', value: translated });
+                    }
+                    catch (err) {
+                        const errorMsg = err.message || 'Unknown error';
+                        webviewView.webview.postMessage({
+                            type: 'output',
+                            value: `// JS Error: ${errorMsg}`
+                        });
+                    }
+                    break;
+                case 'setInputText':
+                    webviewView.webview.postMessage({ type: 'setInputText', value: message.value });
+                    break;
+            }
+        }));
     }
     getHtmlForWebview(webview) {
         const htmlPath = vscode.Uri.joinPath(this._extensionUri, 'view', 'panel.html');
@@ -63,7 +103,7 @@ class PontisSidebarProvider {
             .replace(/%%NONCE%%/g, nonce)
             .replace(/<link href="\$\{styleUri\}"/, `<link href="${styleUri}"`);
         html = html.replace(/<head>/i, `<head>
-  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src ${cspSource}; style-src ${cspSource}; script-src 'nonce-${nonce}';">`);
+          <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src ${cspSource}; style-src ${cspSource}; script-src 'nonce-${nonce}';">`);
         return html;
     }
 }

@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
+import axios from 'axios';
 
 export class PontisSidebarProvider implements vscode.WebviewViewProvider {
   public static readonly viewType = 'pontisView';
@@ -21,6 +22,37 @@ export class PontisSidebarProvider implements vscode.WebviewViewProvider {
     };
 
     webviewView.webview.html = this.getHtmlForWebview(webviewView.webview);
+
+    webviewView.webview.onDidReceiveMessage(async (message) => {
+      switch (message.type) {
+        case 'translate':
+          const { inputCode, langFrom, langTo, model } = message.value;
+
+          try {
+            const response = await axios.post('https://causal-simply-foal.ngrok-free.app/translate', {
+              code: inputCode,
+              model: model,
+              source_lang: langFrom,
+              target_lang: langTo
+            });
+
+            const translated = response.data.translated_code || '// Translation failed.';
+            webviewView.webview.postMessage({ type: 'output', value: translated });
+          } catch (err: any) {
+            const errorMsg = err.message || 'Unknown error';
+            webviewView.webview.postMessage({
+              type: 'output',
+              value: `// JS Error: ${errorMsg}`
+            });
+          }
+
+          break;
+
+        case 'setInputText':
+          webviewView.webview.postMessage({ type: 'setInputText', value: message.value });
+          break;
+      }
+    });
   }
 
   private getHtmlForWebview(webview: vscode.Webview): string {
@@ -43,7 +75,7 @@ export class PontisSidebarProvider implements vscode.WebviewViewProvider {
     html = html.replace(
       /<head>/i,
       `<head>
-  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src ${cspSource}; style-src ${cspSource}; script-src 'nonce-${nonce}';">`
+          <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src ${cspSource}; style-src ${cspSource}; script-src 'nonce-${nonce}';">`
     );
 
     return html;

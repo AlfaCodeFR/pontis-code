@@ -1,30 +1,30 @@
 (function () {
   const vscode = acquireVsCodeApi();
 
-  const inputBox = document.getElementById('inputBox');
-  const outputBox = document.getElementById('outputBox');
-  const modelSelect = document.getElementById('modelSelect');
-  const langFrom = document.getElementById('langFrom');
-  const langTo = document.getElementById('langTo');
-  const score = document.getElementById('score');
+  document.getElementById('translateBtn').addEventListener('click', () => {
+    const input = document.getElementById('inputBox').value;
+    const model = document.getElementById('modelSelect').value;
+    const source = document.getElementById('langFrom').value;
+    const target = document.getElementById('langTo').value;
 
-  document.getElementById('copyBtn').addEventListener('click', () => {
-    navigator.clipboard.writeText(outputBox.value);
-  });
-
-  document.getElementById('newFileBtn').addEventListener('click', () => {
     vscode.postMessage({
-      type: 'newFile',
-      content: outputBox.value
+      type: 'translate',
+      value: {
+        inputCode: input,
+        model: model,
+        langFrom: source,
+        langTo: target
+      }
     });
   });
 
-  window.addEventListener("message", event => {
-    const message = event.data;
-    switch (message.type) {
-      case "setInputText":
-        document.getElementById('inputBox').value = message.value;
-        break;
+  window.addEventListener('message', (event) => {
+    const msg = event.data;
+
+    if (msg.type === 'setInputText') {
+      document.getElementById('inputBox').value = msg.value;
+    } else if (msg.type === 'output') {
+      document.getElementById('outputBox').value = msg.value;
     }
   });
 })();
