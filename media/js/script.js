@@ -27,4 +27,30 @@
       document.getElementById('outputBox').value = msg.value;
     }
   });
+
+  const outputBox = document.getElementById('outputBox');
+
+  // Copy Button Handler
+  document.getElementById('copyBtn').addEventListener('click', async () => {
+    const output = outputBox.value;
+    try {
+      await navigator.clipboard.writeText(output);
+      alert("Output berhasil disalin ke clipboard!");
+    } catch (err) {
+      console.error("Clipboard copy error:", err);
+      alert("Gagal menyalin output.");
+    }
+  });
+
+  // Add New File Button Handler
+  document.getElementById('newFileBtn').addEventListener('click', () => {
+    const output = document.getElementById('outputBox').value;
+    const langTo = document.getElementById('langTo').value;
+
+    vscode.postMessage({
+      type: 'createNewFile',
+      value: output,
+      lang: langTo
+    });
+  });
 })();

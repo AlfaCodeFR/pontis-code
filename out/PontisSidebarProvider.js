@@ -88,6 +88,31 @@ class PontisSidebarProvider {
                 case 'setInputText':
                     webviewView.webview.postMessage({ type: 'setInputText', value: message.value });
                     break;
+                case 'createNewFile': {
+                    const { value, lang } = message;
+                    let languageId = 'plaintext'; // default jika tidak cocok
+                    switch (lang.toLowerCase()) {
+                        case 'java':
+                            languageId = 'java';
+                            break;
+                        case 'c#':
+                        case 'csharp':
+                            languageId = 'csharp';
+                            break;
+                        case 'python':
+                            languageId = 'python';
+                            break;
+                        case 'javascript':
+                            languageId = 'javascript';
+                            break;
+                    }
+                    const newDoc = yield vscode.workspace.openTextDocument({
+                        content: value,
+                        language: languageId
+                    });
+                    vscode.window.showTextDocument(newDoc, vscode.ViewColumn.Beside);
+                    break;
+                }
             }
         }));
     }
