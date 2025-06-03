@@ -28,6 +28,13 @@ export class PontisSidebarProvider implements vscode.WebviewViewProvider {
         case 'translate':
           const { inputCode, langFrom, langTo, model } = message.value;
 
+          vscode.window.withProgress({
+            location: vscode.ProgressLocation.Window,
+            title: "Translating with Pontis...",
+            cancellable: false
+          }, async (progress) => {
+            progress.report({ message: `Using model ${model}...` });
+
           try {
             const response = await axios.post('https://causal-simply-foal.ngrok-free.app/translate', {
               code: inputCode,
@@ -44,7 +51,9 @@ export class PontisSidebarProvider implements vscode.WebviewViewProvider {
               type: 'output',
               value: `// JS Error: ${errorMsg}`
             });
-          }
+            vscode.window.showErrorMessage(`Translation failed: ${errorMsg}`);
+          }}
+          );
 
           break;
 

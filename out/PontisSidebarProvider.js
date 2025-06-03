@@ -67,23 +67,31 @@ class PontisSidebarProvider {
             switch (message.type) {
                 case 'translate':
                     const { inputCode, langFrom, langTo, model } = message.value;
-                    try {
-                        const response = yield axios_1.default.post('https://causal-simply-foal.ngrok-free.app/translate', {
-                            code: inputCode,
-                            model: model,
-                            source_lang: langFrom,
-                            target_lang: langTo
-                        });
-                        const translated = response.data.translated_code || '// Translation failed.';
-                        webviewView.webview.postMessage({ type: 'output', value: translated });
-                    }
-                    catch (err) {
-                        const errorMsg = err.message || 'Unknown error';
-                        webviewView.webview.postMessage({
-                            type: 'output',
-                            value: `// JS Error: ${errorMsg}`
-                        });
-                    }
+                    vscode.window.withProgress({
+                        location: vscode.ProgressLocation.Window,
+                        title: "Translating with Pontis...",
+                        cancellable: false
+                    }, (progress) => __awaiter(this, void 0, void 0, function* () {
+                        progress.report({ message: `Using model ${model}...` });
+                        try {
+                            const response = yield axios_1.default.post('https://causal-simply-foal.ngrok-free.app/translate', {
+                                code: inputCode,
+                                model: model,
+                                source_lang: langFrom,
+                                target_lang: langTo
+                            });
+                            const translated = response.data.translated_code || '// Translation failed.';
+                            webviewView.webview.postMessage({ type: 'output', value: translated });
+                        }
+                        catch (err) {
+                            const errorMsg = err.message || 'Unknown error';
+                            webviewView.webview.postMessage({
+                                type: 'output',
+                                value: `// JS Error: ${errorMsg}`
+                            });
+                            vscode.window.showErrorMessage(`Translation failed: ${errorMsg}`);
+                        }
+                    }));
                     break;
                 case 'setInputText':
                     webviewView.webview.postMessage({ type: 'setInputText', value: message.value });

@@ -12,8 +12,11 @@
 
     <label for="modelSelect">Model</label>
     <select id="modelSelect">
+      <option value="Qwen/Qwen3-4B-Base">Qwen</option>
+      <option value="deepseek-ai/deepseek-coder-1.3b-instruct">Deepseek</option>
+      <option value="microsoft/phi-2">Phi</option>
+      <option value="uclanlp/plbart-base">PLBART</option>
       <option value="Salesforce/codet5-base">CodeT5</option>
-      <option value="lafarizo/code_translation_v4">PLBART</option>
     </select>
 
     <div class="row">
@@ -39,10 +42,6 @@
 
     <label for="outputBox">Output</label>
     <textarea id="outputBox" rows="6" readonly placeholder="Hasil translasi akan muncul di sini..."></textarea>
-
-    <div class="score">
-      Test Score: <span id="score">65%</span>
-    </div>
 
     <div class="button-group">
       <button id="copyBtn">Copy</button>
