@@ -84,10 +84,10 @@ class PontisSidebarProvider {
                             webviewView.webview.postMessage({ type: 'output', value: translated });
                         }
                         catch (err) {
-                            const errorMsg = err.message || 'Unknown error';
+                            const errorMsg = err.message || '// Unknown error';
                             webviewView.webview.postMessage({
                                 type: 'output',
-                                value: `// JS Error: ${errorMsg}`
+                                value: `// Error: ${errorMsg}`
                             });
                             vscode.window.showErrorMessage(`Translation failed: ${errorMsg}`);
                         }
