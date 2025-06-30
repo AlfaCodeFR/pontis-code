@@ -8,30 +8,28 @@
   </head>
   <body>
     <label for="inputBox">Input</label>
-    <textarea id="inputBox" rows="6" placeholder="Masukkan kode Anda..."></textarea>
+    <textarea id="inputBox" placeholder="Masukkan kode Anda..."></textarea>
 
     <label for="modelSelect">Model</label>
     <select id="modelSelect">
-      <option value="Qwen/Qwen3-4B-Base">Qwen</option>
-      <option value="deepseek-ai/deepseek-coder-1.3b-instruct">Deepseek</option>
-      <option value="microsoft/phi-2">Phi</option>
-      <option value="uclanlp/plbart-base">PLBART</option>
+      <option value="microsoft/Phi-4-mini-instruct">Phi-4</option>
+      <option value="deepseek-ai/deepseek-coder-6.7b-instruct">Deepseek-Coder</option>
+      <option value="Qwen/Qwen2.5-Coder-3B-Instruct">Qwen2.5-Coder</option>
       <option value="Salesforce/codet5-base">CodeT5</option>
+      <option value="uclanlp/plbart-base">PLBART</option>
     </select>
 
     <div class="row">
       <div>
         <label for="langFrom">From</label>
         <select id="langFrom">
-          <option>Java</option>
-          <option>C#</option>
+          <option>Auto select</option>
         </select>
       </div>
       <div>
         <label for="langTo">To</label>
         <select id="langTo">
-          <option>Java</option>
-          <option>C#</option>
+          <option>Auto select</option>
         </select>
       </div>
     </div>
@@ -41,7 +39,7 @@
     </div>
 
     <label for="outputBox">Output</label>
-    <textarea id="outputBox" rows="6" readonly placeholder="Hasil translasi akan muncul di sini..."></textarea>
+    <textarea id="outputBox" placeholder="Hasil translasi akan muncul di sini..."></textarea>
 
     <div class="button-group">
       <button id="copyBtn">Copy</button>

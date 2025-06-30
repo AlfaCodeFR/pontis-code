@@ -46,10 +46,10 @@ export class PontisSidebarProvider implements vscode.WebviewViewProvider {
             const translated = response.data.translated_code || '// Translation failed.';
             webviewView.webview.postMessage({ type: 'output', value: translated });
           } catch (err: any) {
-            const errorMsg = err.message || 'Unknown error';
+            const errorMsg = err.message || '// Unknown error';
             webviewView.webview.postMessage({
               type: 'output',
-              value: `// JS Error: ${errorMsg}`
+              value: `// Error: ${errorMsg}`
             });
             vscode.window.showErrorMessage(`Translation failed: ${errorMsg}`);
           }}
