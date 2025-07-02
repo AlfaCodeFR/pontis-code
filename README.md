@@ -69,9 +69,9 @@ Setelah instalasi berhasil, ikuti langkah-langkah berikut untuk menggunakan ekst
 2. **Masukkan Kode**  
    - Tulis atau tempel potongan kode pada kolom input yang tersedia.  
    - Alternatif lainnya, pengguna dapat secara otomatis mengisi kolom input dari editor aktif dengan cara:
-    - `Seleksi potongan kode di editor`
-    - `Klik kanan`
-    - `Pilih **"Translate with Pontis"** dari menu konteks`
+     - `Seleksi potongan kode di editor`
+     - `Klik kanan`
+     - `Pilih **"Translate with Pontis"** dari menu konteks`
 
 3. **Pilih Model**  
    Gunakan dropdown untuk memilih model pembelajaran mesin yang ingin digunakan.
