@@ -2,8 +2,14 @@
   "name": "pontis-code",
   "displayName": "Pontis Code",
   "description": "",
-  "version": "0.0.1",
+  "icon": "pontis_logo.png",
+  "version": "0.0.2",
   "publisher": "fathurrasyid",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/AlfaCodeFR/pontis-code.git"
+  },
+  "license": "MIT",
   "engines": {
     "vscode": "^1.100.0"
   },
