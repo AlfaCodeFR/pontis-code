@@ -114,7 +114,7 @@ Kami terbuka untuk kontribusi!
 - Tambahkan dukungan bahasa baru
 - Tingkatkan UX/UI panel translator
 
-Repo tersedia di: [Potis Code Github](https://github.com/AlfaCodeFR/pontis-code)
+Repository tersedia di: [Pontis Code Github](https://github.com/AlfaCodeFR/pontis-code)
 
 <br>
 
