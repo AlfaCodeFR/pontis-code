@@ -2,9 +2,9 @@
   const vscode = acquireVsCodeApi();
 
   const languageSupport = {
-    "microsoft/Phi-4-mini-instruct": ['C', 'C++', 'CSharp', 'Go', 'Java', 'Javascript', 'Typescript',  'Python', 'Kotlin', 'PHP', 'Rust', 'Swift', 'Scala', 'Ruby',  'Dart'],
-    "deepseek-ai/deepseek-coder-6.7b-instruct": ['C', 'C++', 'CSharp', 'Go', 'Java', 'Javascript', 'Typescript',  'Python', 'Kotlin', 'PHP', 'Rust', 'Swift', 'Scala', 'Ruby',  'Dart'],
-    "Qwen/Qwen2.5-Coder-3B-Instruct": ['C', 'C++', 'CSharp', 'Go', 'Java', 'Javascript', 'Typescript',  'Python', 'Kotlin', 'PHP', 'Rust', 'Swift', 'Scala', 'Ruby',  'Dart'],
+    "microsoft/Phi-4-mini-instruct": ['C', 'C++', 'CSharp', 'Dart', 'Go', 'Java', 'Javascript', 'Kotlin', 'PHP', 'Python', 'Ruby', 'Rust', 'Scala', 'Swift', 'Typescript'],
+    "deepseek-ai/deepseek-coder-6.7b-instruct": ['C', 'C++', 'CSharp', 'Dart', 'Go', 'Java', 'Javascript', 'Kotlin', 'PHP', 'Python', 'Ruby', 'Rust', 'Scala', 'Swift', 'Typescript'],
+    "Qwen/Qwen2.5-Coder-7B-Instruct": ['C', 'C++', 'CSharp', 'Dart', 'Go', 'Java', 'Javascript', 'Kotlin', 'PHP', 'Python', 'Ruby', 'Rust', 'Scala', 'Swift', 'Typescript'],
     "Salesforce/codet5-base": ['Java', 'C#'],
     "uclanlp/plbart-base": ['Java', 'C#']
   };
