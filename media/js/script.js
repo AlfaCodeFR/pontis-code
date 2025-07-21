@@ -2,9 +2,9 @@
   const vscode = acquireVsCodeApi();
 
   const languageSupport = {
-    "microsoft/Phi-4-mini-instruct": ['C', 'C++', 'CSharp', 'Dart', 'Go', 'Java', 'Javascript', 'Kotlin', 'PHP', 'Python', 'Ruby', 'Rust', 'Scala', 'Swift', 'Typescript'],
-    "deepseek-ai/deepseek-coder-6.7b-instruct": ['C', 'C++', 'CSharp', 'Dart', 'Go', 'Java', 'Javascript', 'Kotlin', 'PHP', 'Python', 'Ruby', 'Rust', 'Scala', 'Swift', 'Typescript'],
-    "Qwen/Qwen2.5-Coder-7B-Instruct": ['C', 'C++', 'CSharp', 'Dart', 'Go', 'Java', 'Javascript', 'Kotlin', 'PHP', 'Python', 'Ruby', 'Rust', 'Scala', 'Swift', 'Typescript'],
+    "microsoft/Phi-4-mini-instruct": ['C', 'C++', 'CSharp', 'Dart', 'Go', 'Java', 'Javascript', 'Kotlin', 'PHP', 'Python', 'R','Ruby', 'Rust', 'Scala', 'Swift', 'Typescript'],
+    "deepseek-ai/deepseek-coder-6.7b-instruct": ['C', 'C++', 'CSharp', 'Dart', 'Go', 'Java', 'Javascript', 'Kotlin', 'PHP', 'Python', 'R', 'Ruby', 'Rust', 'Scala', 'Swift', 'Typescript'],
+    "Qwen/Qwen2.5-Coder-7B-Instruct": ['C', 'C++', 'CSharp', 'Dart', 'Go', 'Java', 'Javascript', 'Kotlin', 'PHP', 'Python', 'R', 'Ruby', 'Rust', 'Scala', 'Swift', 'Typescript'],
     "Salesforce/codet5-base": ['Java', 'C#'],
     "uclanlp/plbart-base": ['Java', 'C#']
   };
@@ -12,6 +12,48 @@
   const modelSelect = document.getElementById("modelSelect");
   const langFromSelect = document.getElementById("langFrom");
   const langToSelect = document.getElementById("langTo");
+  const inputBox = document.getElementById("inputBox");
+  const outputBox = document.getElementById("outputBox");
+
+  // Simpan state lokal
+  function saveState() {
+    const state = {
+      input: inputBox.value,
+      output: outputBox.value,
+      model: modelSelect.value,
+      langFrom: langFromSelect.value,
+      langTo: langToSelect.value,
+      timestamp: Date.now() // tambahkan waktu penyimpanan
+    };
+    vscode.setState(state);
+  }
+
+  // Restore state saat webview load
+  window.addEventListener('load', () => {
+    const previousState = vscode.getState();
+
+    // Cek jika state terlalu lama (lebih dari 5 menit)
+    const maxAge = 1000 * 60 * 5; // 5 menit
+    const isStateFresh = previousState && Date.now() - previousState.timestamp < maxAge;
+
+    if (isStateFresh) {
+      inputBox.value = previousState.input || '';
+      outputBox.value = previousState.output || '';
+      modelSelect.value = previousState.model || '';
+
+      modelSelect.dispatchEvent(new Event("change")); // Perbarui dropdown
+
+      // Delay agar dropdown bahasa sempat terisi
+      setTimeout(() => {
+        langFromSelect.value = previousState.langFrom || '';
+        langToSelect.value = previousState.langTo || '';
+        saveState();
+      }, 50);
+    } else {
+      vscode.setState(null);
+      modelSelect.dispatchEvent(new Event("change"));
+    }
+  });
 
   modelSelect.addEventListener("change", () => {
     const selectedModel = modelSelect.value;
@@ -38,16 +80,21 @@
     if (supportedLangs.length > 1) {
       langToSelect.selectedIndex = 1;
     }
+
+    saveState();
   });
 
-  // Inisialisasi sekali saat halaman dimuat
-  modelSelect.dispatchEvent(new Event("change"));
+  // Simpan perubahan saat user mengetik/memilih
+  inputBox.addEventListener("input", saveState);
+  outputBox.addEventListener("input", saveState);
+  langFromSelect.addEventListener("change", saveState);
+  langToSelect.addEventListener("change", saveState);
 
   document.getElementById('translateBtn').addEventListener('click', () => {
-    const input = document.getElementById('inputBox').value;
-    const model = document.getElementById('modelSelect').value;
-    const source = document.getElementById('langFrom').value;
-    const target = document.getElementById('langTo').value;
+    const input = inputBox.value;
+    const model = modelSelect.value;
+    const source = langFromSelect.value;
+    const target = langToSelect.value;
 
     vscode.postMessage({
       type: 'translate',
@@ -64,15 +111,13 @@
     const msg = event.data;
 
     if (msg.type === 'setInputText') {
+      console.log('[Pontis Frontend] Setting input text from backend');
       document.getElementById('inputBox').value = msg.value;
     } else if (msg.type === 'output') {
       document.getElementById('outputBox').value = msg.value;
     }
   });
 
-  const outputBox = document.getElementById('outputBox');
-
-  // Copy Button Handler
   document.getElementById('copyBtn').addEventListener('click', async () => {
     const output = outputBox.value;
     try {
@@ -84,7 +129,6 @@
     }
   });
 
-  // Add New File Button Handler
   document.getElementById('newFileBtn').addEventListener('click', () => {
     const output = document.getElementById('outputBox').value;
     const langTo = document.getElementById('langTo').value;

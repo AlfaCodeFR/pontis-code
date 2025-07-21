@@ -7,12 +7,27 @@ export class PontisSidebarProvider implements vscode.WebviewViewProvider {
   public static readonly viewType = 'pontisView';
   public view?: vscode.WebviewView;
 
+  private pendingInputText: string | null = null;
+
   constructor(private readonly _extensionUri: vscode.Uri) {}
+
+  public setPendingInputText(text: string) {
+
+    if (this.view) {
+      this.view.webview.postMessage({
+        type: 'setInputText',
+        value: text
+      });
+    } else {
+      this.pendingInputText = text;
+    }
+  }
 
   public resolveWebviewView(
     webviewView: vscode.WebviewView
   ): void {
     this.view = webviewView;
+    
     webviewView.webview.options = {
       enableScripts: true,
       localResourceRoots: [
@@ -57,41 +72,43 @@ export class PontisSidebarProvider implements vscode.WebviewViewProvider {
 
           break;
 
-        case 'setInputText':
-          webviewView.webview.postMessage({ type: 'setInputText', value: message.value });
-          break;
+        // case 'setInputText':
+        //   console.log('[Pontis Webview] Received setInputText:', message.value);
+        //   webviewView.webview.postMessage({ type: 'setInputText', value: message.value });
+        //   break;
 
         case 'createNewFile': {
           const { value, lang } = message;
-
-          let languageId = 'plaintext'; // default jika tidak cocok
-
-          switch (lang.toLowerCase()) {
-            case 'java':
-              languageId = 'java';
-              break;
-            case 'c#':
-            case 'csharp':
-              languageId = 'csharp';
-              break;
-            case 'python':
-              languageId = 'python';
-              break;
-            case 'javascript':
-              languageId = 'javascript';
-              break;
-          }
-
-          const newDoc = await vscode.workspace.openTextDocument({
-            content: value,
-            language: languageId
-          });
-
+          const languageId = this.getLanguageId(lang);
+          const newDoc = await vscode.workspace.openTextDocument({ content: value, language: languageId });
           vscode.window.showTextDocument(newDoc, vscode.ViewColumn.Beside);
           break;
         }
       }
     });
+  }
+
+  private getLanguageId(lang: string): string {
+    const lower = lang.toLowerCase();
+    const mapping: { [key: string]: string } = {
+      java: 'java',
+      csharp: 'csharp',
+      python: 'python',
+      javascript: 'javascript',
+      typescript: 'typescript',
+      'c++': 'cpp',
+      cpp: 'cpp',
+      c: 'c',
+      dart: 'dart',
+      go: 'go',
+      kotlin: 'kotlin',
+      php: 'php',
+      ruby: 'ruby',
+      rust: 'rust',
+      scala: 'scala',
+      swift: 'swift'
+    };
+    return mapping[lower] || 'plaintext';
   }
 
   private getHtmlForWebview(webview: vscode.Webview): string {
