@@ -30,6 +30,8 @@
 
   // Restore state saat webview load
   window.addEventListener('load', () => {
+    vscode.postMessage({ type: 'ready' }); // Kirim sinyal bahwa panel siap
+    
     const previousState = vscode.getState();
 
     // Cek jika state terlalu lama (lebih dari 5 menit)

@@ -1,6 +1,5 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
-import * as path from 'path';
 import axios from 'axios';
 
 export class PontisSidebarProvider implements vscode.WebviewViewProvider {
@@ -11,15 +10,15 @@ export class PontisSidebarProvider implements vscode.WebviewViewProvider {
 
   constructor(private readonly _extensionUri: vscode.Uri) {}
 
+  // Menyimpan teks yang akan dikirim ke webview saat tersedia.
   public setPendingInputText(text: string) {
-
+    this.pendingInputText = text;
     if (this.view) {
       this.view.webview.postMessage({
         type: 'setInputText',
         value: text
       });
-    } else {
-      this.pendingInputText = text;
+      this.pendingInputText = null;
     }
   }
 
@@ -40,6 +39,16 @@ export class PontisSidebarProvider implements vscode.WebviewViewProvider {
 
     webviewView.webview.onDidReceiveMessage(async (message) => {
       switch (message.type) {
+        case 'ready':
+          if (this.pendingInputText) {
+            webviewView.webview.postMessage({
+              type: 'setInputText',
+              value: this.pendingInputText
+            });
+            this.pendingInputText = null;
+          }
+          break;
+          
         case 'translate':
           const { inputCode, langFrom, langTo, model } = message.value;
 
@@ -69,13 +78,7 @@ export class PontisSidebarProvider implements vscode.WebviewViewProvider {
             vscode.window.showErrorMessage(`Translation failed: ${errorMsg}`);
           }}
           );
-
           break;
-
-        // case 'setInputText':
-        //   console.log('[Pontis Webview] Received setInputText:', message.value);
-        //   webviewView.webview.postMessage({ type: 'setInputText', value: message.value });
-        //   break;
 
         case 'createNewFile': {
           const { value, lang } = message;
@@ -91,22 +94,23 @@ export class PontisSidebarProvider implements vscode.WebviewViewProvider {
   private getLanguageId(lang: string): string {
     const lower = lang.toLowerCase();
     const mapping: { [key: string]: string } = {
-      java: 'java',
-      csharp: 'csharp',
-      python: 'python',
-      javascript: 'javascript',
-      typescript: 'typescript',
+      c: 'c',
       'c++': 'cpp',
       cpp: 'cpp',
-      c: 'c',
+      csharp: 'csharp',
       dart: 'dart',
       go: 'go',
+      java: 'java',
+      javascript: 'javascript',
       kotlin: 'kotlin',
       php: 'php',
+      python: 'python',
+      r: 'r',
       ruby: 'ruby',
       rust: 'rust',
       scala: 'scala',
-      swift: 'swift'
+      swift: 'swift',
+      typescript: 'typescript'
     };
     return mapping[lower] || 'plaintext';
   }
