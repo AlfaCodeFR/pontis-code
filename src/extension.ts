@@ -19,14 +19,6 @@ export function activate(context: vscode.ExtensionContext) {
                 vscode.window.showInformationMessage('No code selected');
                 return;
             }
-
-            const selectedText = editor.document.getText(editor.selection);
-
-            // Simpan input sementara agar bisa digunakan nanti saat webview siap
-            provider.setPendingInputText(selectedText);
-
-            // Buka panel secara otomatis jika belum terbuka
-            await vscode.commands.executeCommand('workbench.view.extension.pontisSidebar');
         })
     );
 }

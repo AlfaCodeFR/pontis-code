@@ -52,6 +52,18 @@ const axios_1 = __importDefault(require("axios"));
 class PontisSidebarProvider {
     constructor(_extensionUri) {
         this._extensionUri = _extensionUri;
+        this.pendingInputText = null;
+    }
+    // Menyimpan teks yang akan dikirim ke webview saat tersedia.
+    setPendingInputText(text) {
+        this.pendingInputText = text;
+        if (this.view) {
+            this.view.webview.postMessage({
+                type: 'setInputText',
+                value: text
+            });
+            this.pendingInputText = null;
+        }
     }
     resolveWebviewView(webviewView) {
         this.view = webviewView;
@@ -65,6 +77,15 @@ class PontisSidebarProvider {
         webviewView.webview.html = this.getHtmlForWebview(webviewView.webview);
         webviewView.webview.onDidReceiveMessage((message) => __awaiter(this, void 0, void 0, function* () {
             switch (message.type) {
+                case 'ready':
+                    if (this.pendingInputText) {
+                        webviewView.webview.postMessage({
+                            type: 'setInputText',
+                            value: this.pendingInputText
+                        });
+                        this.pendingInputText = null;
+                    }
+                    break;
                 case 'translate':
                     const { inputCode, langFrom, langTo, model } = message.value;
                     vscode.window.withProgress({
@@ -93,36 +114,38 @@ class PontisSidebarProvider {
                         }
                     }));
                     break;
-                case 'setInputText':
-                    webviewView.webview.postMessage({ type: 'setInputText', value: message.value });
-                    break;
                 case 'createNewFile': {
                     const { value, lang } = message;
-                    let languageId = 'plaintext'; // default jika tidak cocok
-                    switch (lang.toLowerCase()) {
-                        case 'java':
-                            languageId = 'java';
-                            break;
-                        case 'c#':
-                        case 'csharp':
-                            languageId = 'csharp';
-                            break;
-                        case 'python':
-                            languageId = 'python';
-                            break;
-                        case 'javascript':
-                            languageId = 'javascript';
-                            break;
-                    }
-                    const newDoc = yield vscode.workspace.openTextDocument({
-                        content: value,
-                        language: languageId
-                    });
+                    const languageId = this.getLanguageId(lang);
+                    const newDoc = yield vscode.workspace.openTextDocument({ content: value, language: languageId });
                     vscode.window.showTextDocument(newDoc, vscode.ViewColumn.Beside);
                     break;
                 }
             }
         }));
+    }
+    getLanguageId(lang) {
+        const lower = lang.toLowerCase();
+        const mapping = {
+            c: 'c',
+            'c++': 'cpp',
+            cpp: 'cpp',
+            csharp: 'csharp',
+            dart: 'dart',
+            go: 'go',
+            java: 'java',
+            javascript: 'javascript',
+            kotlin: 'kotlin',
+            php: 'php',
+            python: 'python',
+            r: 'r',
+            ruby: 'ruby',
+            rust: 'rust',
+            scala: 'scala',
+            swift: 'swift',
+            typescript: 'typescript'
+        };
+        return mapping[lower] || 'plaintext';
     }
     getHtmlForWebview(webview) {
         const htmlPath = vscode.Uri.joinPath(this._extensionUri, 'view', 'panel.html');
