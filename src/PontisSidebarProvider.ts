@@ -6,20 +6,19 @@ export class PontisSidebarProvider implements vscode.WebviewViewProvider {
   public static readonly viewType = 'pontisView';
   public view?: vscode.WebviewView;
 
-  private pendingInputText: string | null = null;
-
   constructor(private readonly _extensionUri: vscode.Uri) {}
 
-  // Menyimpan teks yang akan dikirim ke webview saat tersedia.
-  public setPendingInputText(text: string) {
-    this.pendingInputText = text;
-    if (this.view) {
-      this.view.webview.postMessage({
-        type: 'setInputText',
-        value: text
-      });
-      this.pendingInputText = null;
-    }
+  public setInputText(text: string) {
+      if (this.view) {
+          this.view.webview.postMessage({
+              type: 'setInputText',
+              value: text
+          });
+      } else {
+          vscode.window.showWarningMessage(
+              'Pontis panel belum dibuka. Silakan buka panel untuk mengirim kode.'
+          );
+      }
   }
 
   public resolveWebviewView(
@@ -39,16 +38,6 @@ export class PontisSidebarProvider implements vscode.WebviewViewProvider {
 
     webviewView.webview.onDidReceiveMessage(async (message) => {
       switch (message.type) {
-        case 'ready':
-          if (this.pendingInputText) {
-            webviewView.webview.postMessage({
-              type: 'setInputText',
-              value: this.pendingInputText
-            });
-            this.pendingInputText = null;
-          }
-          break;
-          
         case 'translate':
           const { inputCode, langFrom, langTo, model } = message.value;
 
@@ -96,7 +85,8 @@ export class PontisSidebarProvider implements vscode.WebviewViewProvider {
     const mapping: { [key: string]: string } = {
       c: 'c',
       'c++': 'cpp',
-      cpp: 'cpp',
+      cpp: 'cpp',      
+      'c#': 'csharp',
       csharp: 'csharp',
       dart: 'dart',
       go: 'go',

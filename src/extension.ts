@@ -19,6 +19,20 @@ export function activate(context: vscode.ExtensionContext) {
                 vscode.window.showInformationMessage('No code selected');
                 return;
             }
+
+            const selection = editor.selection;
+            const selectedText = editor.document.getText(selection);
+
+            if (!selectedText.trim()) {
+                vscode.window.showInformationMessage('No code selected');
+                return;
+            }
+
+            // Buka panel jika belum terbuka
+            await vscode.commands.executeCommand('workbench.view.extension.pontisView');
+
+            // Kirim langsung ke panel
+            provider.setInputText(selectedText);
         })
     );
 }

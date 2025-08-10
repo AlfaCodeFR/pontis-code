@@ -2,9 +2,9 @@
   const vscode = acquireVsCodeApi();
 
   const languageSupport = {
-    "microsoft/Phi-4-mini-instruct": ['C', 'C++', 'CSharp', 'Dart', 'Go', 'Java', 'Javascript', 'Kotlin', 'PHP', 'Python', 'R','Ruby', 'Rust', 'Scala', 'Swift', 'Typescript'],
-    "deepseek-ai/deepseek-coder-6.7b-instruct": ['C', 'C++', 'CSharp', 'Dart', 'Go', 'Java', 'Javascript', 'Kotlin', 'PHP', 'Python', 'R', 'Ruby', 'Rust', 'Scala', 'Swift', 'Typescript'],
-    "Qwen/Qwen2.5-Coder-7B-Instruct": ['C', 'C++', 'CSharp', 'Dart', 'Go', 'Java', 'Javascript', 'Kotlin', 'PHP', 'Python', 'R', 'Ruby', 'Rust', 'Scala', 'Swift', 'Typescript'],
+    "microsoft/Phi-4-mini-instruct": ['C', 'C++', 'C#', 'Dart', 'Go', 'Java', 'Javascript', 'Kotlin', 'PHP', 'Python', 'R','Ruby', 'Rust', 'Scala', 'Swift', 'Typescript'],
+    "deepseek-ai/deepseek-coder-6.7b-instruct": ['C', 'C++', 'C#', 'Dart', 'Go', 'Java', 'Javascript', 'Kotlin', 'PHP', 'Python', 'R', 'Ruby', 'Rust', 'Scala', 'Swift', 'Typescript'],
+    "Qwen/Qwen2.5-Coder-7B-Instruct": ['C', 'C++', 'C#', 'Dart', 'Go', 'Java', 'Javascript', 'Kotlin', 'PHP', 'Python', 'R', 'Ruby', 'Rust', 'Scala', 'Swift', 'Typescript'],
     "Salesforce/codet5-base": ['Java', 'C#'],
     "uclanlp/plbart-base": ['Java', 'C#']
   };
@@ -78,7 +78,6 @@
       langToSelect.appendChild(optionTo);
     });
 
-    // Default bahasa sumber dan target
     if (supportedLangs.length > 1) {
       langToSelect.selectedIndex = 1;
     }

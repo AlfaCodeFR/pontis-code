@@ -112,7 +112,7 @@ Pastikan untuk mematuhi ketentuan masing-masing lisensi dalam penggunaan dan dis
 Kami terbuka untuk kontribusi!
 - Laporkan bug
 - Tambahkan dukungan bahasa baru
-- Tingkatkan UX/UI panel translator
+- Tingkatkan UI/UX panel translator
 
 Repository tersedia di: [Pontis Code Github](https://github.com/AlfaCodeFR/pontis-code)
 
