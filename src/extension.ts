@@ -13,26 +13,25 @@ export function activate(context: vscode.ExtensionContext) {
     console.log('Sidebar provider didaftarkan!');
 
     context.subscriptions.push(
-        vscode.commands.registerCommand('pontis.translateFromContextMenu', async () => {
+        vscode.commands.registerCommand('pontis.translateFromContextMenu', () => {
             const editor = vscode.window.activeTextEditor;
-            if (!editor) {
-                vscode.window.showInformationMessage('No code selected');
-                return;
-            }
+            if (!editor) return;
 
             const selection = editor.selection;
             const selectedText = editor.document.getText(selection);
 
-            if (!selectedText.trim()) {
-                vscode.window.showInformationMessage('No code selected');
-                return;
+            vscode.commands.executeCommand('pontis.setInputText', selectedText);
+        })
+    );
+
+    context.subscriptions.push(
+        vscode.commands.registerCommand('pontis.setInputText', (text: string) => {
+            if (provider?.view) {
+            provider.view.webview.postMessage({
+                type: 'setInputText',
+                value: text
+            });
             }
-
-            // Buka panel jika belum terbuka
-            await vscode.commands.executeCommand('workbench.view.extension.pontisView');
-
-            // Kirim langsung ke panel
-            provider.setInputText(selectedText);
         })
     );
 }

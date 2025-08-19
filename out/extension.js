@@ -32,15 +32,6 @@ var __importStar = (this && this.__importStar) || (function () {
         return result;
     };
 })();
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.activate = activate;
 exports.deactivate = deactivate;
@@ -51,13 +42,22 @@ function activate(context) {
     const provider = new PontisSidebarProvider_1.PontisSidebarProvider(context.extensionUri);
     context.subscriptions.push(vscode.window.registerWebviewViewProvider('pontisView', provider));
     console.log('Sidebar provider didaftarkan!');
-    context.subscriptions.push(vscode.commands.registerCommand('pontis.translateFromContextMenu', () => __awaiter(this, void 0, void 0, function* () {
+    context.subscriptions.push(vscode.commands.registerCommand('pontis.translateFromContextMenu', () => {
         const editor = vscode.window.activeTextEditor;
-        if (!editor) {
-            vscode.window.showInformationMessage('No code selected');
+        if (!editor)
             return;
+        const selection = editor.selection;
+        const selectedText = editor.document.getText(selection);
+        vscode.commands.executeCommand('pontis.setInputText', selectedText);
+    }));
+    context.subscriptions.push(vscode.commands.registerCommand('pontis.setInputText', (text) => {
+        if (provider === null || provider === void 0 ? void 0 : provider.view) {
+            provider.view.webview.postMessage({
+                type: 'setInputText',
+                value: text
+            });
         }
-    })));
+    }));
 }
 function deactivate() { }
 //# sourceMappingURL=extension.js.map

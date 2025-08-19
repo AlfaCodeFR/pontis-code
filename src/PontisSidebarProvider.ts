@@ -8,19 +8,6 @@ export class PontisSidebarProvider implements vscode.WebviewViewProvider {
 
   constructor(private readonly _extensionUri: vscode.Uri) {}
 
-  public setInputText(text: string) {
-      if (this.view) {
-          this.view.webview.postMessage({
-              type: 'setInputText',
-              value: text
-          });
-      } else {
-          vscode.window.showWarningMessage(
-              'Pontis panel belum dibuka. Silakan buka panel untuk mengirim kode.'
-          );
-      }
-  }
-
   public resolveWebviewView(
     webviewView: vscode.WebviewView
   ): void {
@@ -76,6 +63,10 @@ export class PontisSidebarProvider implements vscode.WebviewViewProvider {
           vscode.window.showTextDocument(newDoc, vscode.ViewColumn.Beside);
           break;
         }
+
+        case 'setInputText':
+          webviewView.webview.postMessage({ type: 'setInputText', value: message.value });
+          break;
       }
     });
   }

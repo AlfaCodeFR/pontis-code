@@ -114,6 +114,8 @@
     if (msg.type === 'setInputText') {
       console.log('[Pontis Frontend] Setting input text from backend');
       document.getElementById('inputBox').value = msg.value;
+      
+      saveState();
     } else if (msg.type === 'output') {
       document.getElementById('outputBox').value = msg.value;
     }

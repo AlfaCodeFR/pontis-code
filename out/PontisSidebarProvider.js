@@ -52,18 +52,6 @@ const axios_1 = __importDefault(require("axios"));
 class PontisSidebarProvider {
     constructor(_extensionUri) {
         this._extensionUri = _extensionUri;
-        this.pendingInputText = null;
-    }
-    // Menyimpan teks yang akan dikirim ke webview saat tersedia.
-    setPendingInputText(text) {
-        this.pendingInputText = text;
-        if (this.view) {
-            this.view.webview.postMessage({
-                type: 'setInputText',
-                value: text
-            });
-            this.pendingInputText = null;
-        }
     }
     resolveWebviewView(webviewView) {
         this.view = webviewView;
@@ -77,15 +65,6 @@ class PontisSidebarProvider {
         webviewView.webview.html = this.getHtmlForWebview(webviewView.webview);
         webviewView.webview.onDidReceiveMessage((message) => __awaiter(this, void 0, void 0, function* () {
             switch (message.type) {
-                case 'ready':
-                    if (this.pendingInputText) {
-                        webviewView.webview.postMessage({
-                            type: 'setInputText',
-                            value: this.pendingInputText
-                        });
-                        this.pendingInputText = null;
-                    }
-                    break;
                 case 'translate':
                     const { inputCode, langFrom, langTo, model } = message.value;
                     vscode.window.withProgress({
@@ -121,6 +100,9 @@ class PontisSidebarProvider {
                     vscode.window.showTextDocument(newDoc, vscode.ViewColumn.Beside);
                     break;
                 }
+                case 'setInputText':
+                    webviewView.webview.postMessage({ type: 'setInputText', value: message.value });
+                    break;
             }
         }));
     }
@@ -130,6 +112,7 @@ class PontisSidebarProvider {
             c: 'c',
             'c++': 'cpp',
             cpp: 'cpp',
+            'c#': 'csharp',
             csharp: 'csharp',
             dart: 'dart',
             go: 'go',

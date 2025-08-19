@@ -35,7 +35,7 @@ Pontis adalah ekstensi Visual Studio Code yang memungkinkan penerjemahan kode an
 
 Termasuk namun tidak terbatas pada:
 
-- C, C++, CSharp, Dart, Go, Java, Javascript, Kotlin, PHP, Python, Ruby, Rust, Scala, Swift, Typescript
+- C, C++, CSharp, Dart, Go, Java, Javascript, Kotlin, PHP, Python, R, Ruby, Rust, Scala, Swift, Typescript
 
 <br>
 
@@ -121,4 +121,4 @@ Repository tersedia di: [Pontis Code Github](https://github.com/AlfaCodeFR/ponti
 ## 💬 Kontak
 
 Jika ada pertanyaan, saran, atau kolaborasi:
-📧 Email: fathur.rasyid197@gmail.com
+📧 Email: fathurrasyid212@gmail.com
